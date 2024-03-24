@@ -2,9 +2,9 @@ name:                2nd-year
 version:             0.1.0.0
 github:              "githubuser/2nd-year"
 license:             BSD3
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2019 Author name here"
+author:              "Alejo Scarlato"
+maintainer:          "ascarlato@frba.utn.edu.ar"
+copyright:           "2024 Alejo Scarlato"
 
 extra-source-files:
 - README.md

@@ -1,0 +1,3 @@
+stack clean | Cleans all build files
+stack ghci | executes Library.hs
+stack test | executes Spec.hs
