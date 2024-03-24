@@ -1,3 +1,9 @@
-stack clean | Cleans all build files
-stack ghci | executes Library.hs
-stack test | executes Spec.hs
+stack clean | Limpiar todos los archivos de las builds anteriores.
+stack ghci | Ejecutar Library.hs
+stack test | Ejecutar Spec.hs
+:r | Recargar el intérprete de Haskell.
+:q | Salir del intérprete de Haskell.
+:h | Mostrar la ayuda de los comandos existentes.
+:t expresión | Permitir ver la definición de tipos de una expresión. Por ejemplo: :t length o :t (1 +).
+:i definición | Permitir ver la información asociada a un tipo/conjunto de tipos. Por ejemplo: :i Int o :i Num.
+:set prompt "> " | Cambiar el "prompt" de la consola por "> ".
