@@ -1,3 +1,11 @@
+Crear un nuevo proyecto:
+
+1. stack new proyecto-test https://github.com/10Pines/pdepreludat/releases/latest/download/pdepreludat.hsfiles | Crear un nuevo proyecto de Haskell con stack.
+2. stack setup | Descargar e instalar la versión de GHC y de Stack que se encuentran en el archivo stack.yaml.
+
+Comandos útiles:
+
+stack build | Compilar el proyecto.
 stack clean | Limpiar todos los archivos de las builds anteriores.
 stack ghci | Ejecutar Library.hs
 stack test | Ejecutar Spec.hs
