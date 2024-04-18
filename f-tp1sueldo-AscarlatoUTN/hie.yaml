@@ -1,0 +1,7 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "salarioDocente:lib"
+
+    - path: "./test"
+      component: "salarioDocente:test:salarioDocente-test"
