@@ -1,10 +1,11 @@
 module Library where
 import PdePreludat
 
--- Estructuras --
+-- Definición de tipos y estructuras de datos --
 
-type Minutos = Number
+type Minutos = Number  -- Definimos un alias para Number llamado Minutos
 
+-- Definimos el tipo de dato Cancion con sus respectivos campos
 data Cancion = Cancion {
     titulo :: String,
     duracion :: Minutos,
@@ -12,9 +13,11 @@ data Cancion = Cancion {
     acapella :: Bool
 } deriving (Eq, Show)
 
+-- Definimos el tipo de dato Repertorio como un tipo enumerado
 data Repertorio = PatternMatching | SeisDieciocho | LaVidaEnHaskell | MalaVidaEnHaskell | TiemblanLosZurdos
     deriving (Eq, Show)
 
+-- Función que devuelve la canción correspondiente a cada repertorio
 cancionesRepertorio :: Repertorio -> Cancion
 cancionesRepertorio PatternMatching = patternMatching
 cancionesRepertorio SeisDieciocho = seisDieciocho
@@ -22,10 +25,11 @@ cancionesRepertorio LaVidaEnHaskell = laVidaEnHaskell
 cancionesRepertorio MalaVidaEnHaskell = malaVidaEnHaskell
 cancionesRepertorio TiemblanLosZurdos = tiemblanLosZurdos
 
+-- Definimos el tipo de dato Instrumentos como un tipo enumerado
 data Instrumentos = Guitarra | Bajo | Bateria | Teclado
     deriving (Eq, Show)
 
--- Canciones --
+-- Definición de canciones --
 
 patternMatching :: Cancion
 patternMatching = Cancion {
@@ -67,17 +71,21 @@ tiemblanLosZurdos = Cancion {
     acapella = False
 }
 
--- Funciones --
+-- Definición de funciones --
 
+-- Función que devuelve el primer carácter del título de una canción
 primerCaracter :: Cancion -> Char
 primerCaracter cancion = head (titulo cancion)
 
+-- Función que verifica si la duración de una canción es un número par
 duracionPar :: Cancion -> Bool
 duracionPar cancion = rem (duracion cancion) 2 == 0
 
+-- Función que verifica si una canción es acapella (no tiene instrumentos)
 acapellaCancion :: Cancion -> Bool
 acapellaCancion cancion = instrumentos cancion == []
 
+-- Función que calcula la aceptación de una canción basándose en ciertas condiciones
 aceptacionCancion :: Cancion -> Number
 aceptacionCancion cancion
     | primerCaracter cancion == 'M' = 500
@@ -85,17 +93,21 @@ aceptacionCancion cancion
     | acapellaCancion cancion = 10
     | otherwise = 0
 
+-- Función que decide qué canción tocar basándose en el primer carácter del título
 tocarCancion :: Repertorio -> Repertorio -> String
 tocarCancion cancion1 cancion2
     | primerCaracter (cancionesRepertorio cancion1) <= primerCaracter (cancionesRepertorio cancion2) = titulo (cancionesRepertorio cancion1)
     | otherwise = titulo (cancionesRepertorio cancion2)
 
+-- Función que verifica si una canción es aceptada por el público
 aceptadaPorPublico :: Cancion -> Bool
 aceptadaPorPublico cancion = aceptacionCancion cancion > 60
 
+-- Función que verifica si un instrumento puede interpretar una canción
 interpretarCancion :: Instrumentos -> Repertorio -> Bool
 interpretarCancion instrumento cancion = elem (instrumento) (instrumentos (cancionesRepertorio cancion))
 
+-- Función que decide cuánto tiempo tocar una canción basándose en si es aceptada por el público
 tocarCancionAceptada :: Repertorio -> Minutos
 tocarCancionAceptada cancion
     | aceptadaPorPublico (cancionesRepertorio cancion) = duracion (cancionesRepertorio cancion)
