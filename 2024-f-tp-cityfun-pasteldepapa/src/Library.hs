@@ -1,71 +1,74 @@
 module Library where
 import PdePreludat
 
--- Dominio --
+-- ----------------- Dominio ------------------
 
-data Ciudad = Ciudad {
+data Ciudad = UnaCiudad{
   nombre :: String,
-  año :: Number,
+  annio :: Number,            -- annio de fundación
   atracciones :: [String],
   costoDeVida :: Number
 } deriving (Show, Eq)
 
--- Definiciones de ciudades
+-- ----------------- Definición de Ciudades (Ejemplo) ------------------
 
 baradero :: Ciudad
-baradero = Ciudad {
+baradero = UnaCiudad {
   nombre = "Baradero",
-  año = 1615,
+  annio = 1615,
   atracciones = ["Parque del Este", "Museo Alejandro Barbich"],
   costoDeVida = 150
 }
 
 nullish :: Ciudad
-nullish = Ciudad {
+nullish = UnaCiudad {
   nombre = "Nullish",
-  año = 1800,
+  annio = 1800,
   atracciones = [],
   costoDeVida = 140
 }
 
 caletaOlivia :: Ciudad
-caletaOlivia = Ciudad {
+caletaOlivia = UnaCiudad {
   nombre = "CaletaOlivia",
-  año = 1901,
+  annio = 1901,
   atracciones = ["El Gorosito", "Faro Costanera"],
   costoDeVida = 120
 }
 
 maipu :: Ciudad
-maipu = Ciudad {
+maipu = UnaCiudad {
   nombre = "Maipu",
-  año = 1878,
+  annio = 1878,
   atracciones = ["Fortín Kakel"],
   costoDeVida = 115
 }
 
 azul :: Ciudad
-azul = Ciudad {
+azul = UnaCiudad {
   nombre = "Azul",
-  año = 1832,
-  atracciones = ["Teatro Español", "Parque Municipal Sarmiento", "Costanera Cacique Catriel"],
+  annio = 1832,
+  atracciones = ["Teatro Espanniol", "Parque Municipal Sarmiento", "Costanera Cacique Catriel"],
   costoDeVida = 190
 }
 
--- Parte 1 --
+-- ----------------- Parte 1 ------------------
 
 valorDeUnaCiudad :: Ciudad -> Number
 valorDeUnaCiudad ciudad 
-  | año ciudad < 1800 = valorCiudadFundadaAntesDe1800 ciudad
-  | (null . atracciones) ciudad = 2 * costoDeVida ciudad
+  | annio ciudad < 1800 = valorCiudadFundadaAntesDe1800 ciudad
+  | conAtracciones ciudad = 2 * costoDeVida ciudad
   | otherwise = 3 * costoDeVida ciudad
 
 valorCiudadFundadaAntesDe1800 :: Ciudad -> Number
-valorCiudadFundadaAntesDe1800 ciudad = 5 * (1800 - año ciudad)
+valorCiudadFundadaAntesDe1800 ciudad = 5 * (1800 - annio ciudad)
 
--- Parte 2 --
+conAtracciones :: Ciudad -> Bool
+conAtracciones = not . null . atracciones
 
--- Funcion 1
+-- ----------------- Parte 2 ------------------
+
+-- Función 1
 tieneAtraccionCopada :: Ciudad -> Bool
 tieneAtraccionCopada  = elem True . primerCaracter
 
@@ -75,22 +78,133 @@ primerCaracter ciudad = map empiezaConVocal (atracciones ciudad)
 empiezaConVocal :: String -> Bool
 empiezaConVocal palabra = elem (head palabra) ['A', 'E', 'I', 'O', 'U']
 
--- Funcion 2
 esCiudadSobria :: Ciudad -> Number -> Bool
-esCiudadSobria ciudad x = (all (== True) (atraccionesTienenMasDeXLetras ciudad x)) && (not (null (atracciones ciudad)))
+esCiudadSobria ciudad numeroLetras = all ((numeroLetras <) . length) (atracciones ciudad) && (conAtracciones ciudad)
 
-atraccionesTienenMasDeXLetras :: Ciudad -> Number -> [Bool]
-atraccionesTienenMasDeXLetras ciudad x = map (x <) (longitudDeAtracciones ciudad)
-
-longitudDeAtracciones :: Ciudad -> [Number]
-longitudDeAtracciones ciudad = map length (atracciones ciudad)
-
--- Funcion 3
+-- Función 3
 nombreRaro :: Ciudad -> Bool
 nombreRaro = (< 5) . length . nombre
 
--- Parte 3 --
+-- ----------------- Parte 3 ------------------
+
+type Evento = Ciudad -> Ciudad
+
+-- Función 1
+sumarNuevaAtraccion :: String -> Evento
+sumarNuevaAtraccion atraccion ciudad = ((agregarAtraccion atraccion) . (modificarCostoDeVida 1.2) ) ciudad
+
+modificarCostoDeVida ::  Number -> Evento
+modificarCostoDeVida x ciudad = ciudad { 
+  costoDeVida = ((* x) . costoDeVida) ciudad
+}
+
+agregarAtraccion :: String -> Evento
+agregarAtraccion atraccion ciudad = ciudad {
+  atracciones = atracciones ciudad ++ [atraccion]
+}
+-- Función 2
+
+crisis :: Evento
+crisis ciudad = ciudad {
+  atracciones = 
+    if conAtracciones ciudad
+      then init (atracciones ciudad)
+      else atracciones ciudad,
+  costoDeVida = costoDeVida ciudad * 0.9
+}
+
+-- Función 3
+remodelacion :: Number -> Evento
+remodelacion porcentaje ciudad = (agregarNewNombre . modificarCostoDeVida (conseguirPorcentaje porcentaje)) ciudad
+
+agregarNewNombre :: Evento
+agregarNewNombre ciudad = ciudad {nombre = "New " ++ nombre ciudad}
+
+conseguirPorcentaje :: Number ->  Number
+conseguirPorcentaje numero = 1 + (numero / 100)
+
+-- Función 4
+
+reevaluacion :: Number -> Evento
+reevaluacion numeroLetras ciudad  
+  | esCiudadSobria ciudad numeroLetras = modificarCostoDeVida 1.1 ciudad
+  | otherwise = restarCostoDeVida 3 ciudad
+
+restarCostoDeVida :: Number -> Evento
+restarCostoDeVida x ciudad = ciudad {
+  costoDeVida = costoDeVida ciudad - x
+}
+
+-- ----------------- Parte 4 ------------------
+
+transformacion :: Number -> Number -> Evento
+transformacion porcentaje numeroLetras = (reevaluacion  numeroLetras) . crisis . (remodelacion porcentaje)
 
 
+--------------------- Entrega 2 ---------------------------
 
--- Parte 4 --
+data Criterio = CostoDeVida | CantAtracciones
+  deriving (Show, Eq)
+
+data Annio = UnAnnio {
+  pasoAnnio :: Number,
+  eventos :: [Evento]
+} deriving (Show, Eq)
+
+dosMilVeintiDos :: Annio
+dosMilVeintiDos = UnAnnio {
+  pasoAnnio = 2022,
+  eventos = [crisis, remodelacion 5, reevaluacion 7]
+}
+
+dosMilQuince :: Annio
+dosMilQuince = UnAnnio {
+  pasoAnnio = 2015,
+  eventos = []
+}
+
+pasoDelAnnio :: Annio -> Evento
+pasoDelAnnio pasoAnnio ciudad = foldl (\ciudadAnnio eventos -> eventos ciudadAnnio) ciudad (eventos pasoAnnio) 
+
+-- Comparar una ciudad antes y después de un evento
+compararCiudad :: Ciudad -> Criterio -> Evento -> Bool
+compararCiudad ciudad criterio evento
+  | criterio == CostoDeVida = compararCostoDeVida ciudad evento
+  | criterio == CantAtracciones = compararCantAtracciones ciudad evento
+
+-- Comparar el costo de vida de la ciudad antes y después del evento
+compararCostoDeVida :: Ciudad -> Evento -> Bool
+compararCostoDeVida ciudad evento = costoDeVida (aplicarEvento evento ciudad) > costoDeVida ciudad
+
+-- Comparar la cantidad de atracciones de la ciudad antes y después del evento
+compararCantAtracciones :: Ciudad -> Evento -> Bool
+compararCantAtracciones ciudad evento = length (atracciones (aplicarEvento evento ciudad)) > length (atracciones ciudad)
+
+-- Aplicar un evento a una ciudad
+aplicarEvento :: Evento -> Ciudad -> Ciudad
+aplicarEvento evento ciudad = evento ciudad
+
+eventoAumentaCostoDeVida :: Annio -> Evento
+eventoAumentaCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
+  where
+    aplicarEventoSiAumentaCosto ciudad evento =
+      if compararCostoDeVida ciudad evento
+        then aplicarEvento evento ciudad
+        else ciudad
+
+eventoDisminuyeCostoDeVida :: Annio -> Evento
+eventoDisminuyeCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
+  where
+    aplicarEventoSiAumentaCosto ciudad evento =
+      if not (compararCostoDeVida ciudad evento)
+        then aplicarEvento evento ciudad
+        else ciudad
+
+-- Por revisar ejemplo que no nos da
+eventoAumentaValor :: Annio -> Evento
+eventoAumentaValor annio ciudad = foldl aplicarSiAumentaValorCiudad ciudad (eventos annio)
+  where
+    aplicarSiAumentaValorCiudad ciudad evento =
+      if (valorDeUnaCiudad (aplicarEvento evento ciudad))> (valorDeUnaCiudad ciudad)
+        then aplicarEvento evento ciudad
+        else ciudad
