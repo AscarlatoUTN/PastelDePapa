@@ -184,6 +184,7 @@ compararCantAtracciones ciudad evento = length (atracciones (aplicarEvento event
 aplicarEvento :: Evento -> Ciudad -> Ciudad
 aplicarEvento evento ciudad = evento ciudad
 
+-- Realizar un evento si aumenta el costo de vida
 eventoAumentaCostoDeVida :: Annio -> Evento
 eventoAumentaCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
   where
@@ -192,6 +193,7 @@ eventoAumentaCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad
         then aplicarEvento evento ciudad
         else ciudad
 
+-- Realizar un evento si disminuye el costo de vida
 eventoDisminuyeCostoDeVida :: Annio -> Evento
 eventoDisminuyeCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
   where
@@ -200,7 +202,7 @@ eventoDisminuyeCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciud
         then aplicarEvento evento ciudad
         else ciudad
 
--- Por revisar ejemplo que no nos da
+-- Realizar un evento si aumenta la cantidad de atracciones
 eventoAumentaValor :: Annio -> Evento
 eventoAumentaValor annio ciudad = foldl aplicarSiAumentaValorCiudad ciudad (eventos annio)
   where
