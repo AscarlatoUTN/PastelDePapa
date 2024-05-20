@@ -1,5 +1,6 @@
 module Library where
 import PdePreludat
+import Data.List (sort)
 
 -- ----------------- Dominio ------------------
 
@@ -78,6 +79,7 @@ primerCaracter ciudad = map empiezaConVocal (atracciones ciudad)
 empiezaConVocal :: String -> Bool
 empiezaConVocal palabra = elem (head palabra) ['A', 'E', 'I', 'O', 'U']
 
+-- Función 2
 esCiudadSobria :: Ciudad -> Number -> Bool
 esCiudadSobria ciudad numeroLetras = all ((numeroLetras <) . length) (atracciones ciudad) && (conAtracciones ciudad)
 
@@ -105,13 +107,15 @@ agregarAtraccion atraccion ciudad = ciudad {
 -- Función 2
 
 crisis :: Evento
-crisis ciudad = ciudad {
-  atracciones = 
-    if conAtracciones ciudad
-      then init (atracciones ciudad)
-      else atracciones ciudad,
-  costoDeVida = costoDeVida ciudad * 0.9
-}
+crisis ciudad
+  | conAtracciones ciudad = ciudad {
+      atracciones = init (atracciones ciudad),
+      costoDeVida = costoDeVida ciudad * 0.9
+    }
+  | otherwise = ciudad { -- En caso de no tener atracciones
+      atracciones = atracciones ciudad,
+      costoDeVida = costoDeVida ciudad * 0.9
+    }
 
 -- Función 3
 remodelacion :: Number -> Evento
@@ -140,7 +144,6 @@ restarCostoDeVida x ciudad = ciudad {
 transformacion :: Number -> Number -> Evento
 transformacion porcentaje numeroLetras = (reevaluacion  numeroLetras) . crisis . (remodelacion porcentaje)
 
-
 --------------------- Entrega 2 ---------------------------
 
 data Criterio = CostoDeVida | CantAtracciones
@@ -163,8 +166,14 @@ dosMilQuince = UnAnnio {
   eventos = []
 }
 
+-- Parte 4
+
+-- Funcion 1
+
 pasoDelAnnio :: Annio -> Evento
 pasoDelAnnio pasoAnnio ciudad = foldl (\ciudadAnnio eventos -> eventos ciudadAnnio) ciudad (eventos pasoAnnio) 
+
+-- Funcion 2
 
 -- Comparar una ciudad antes y después de un evento
 compararCiudad :: Ciudad -> Criterio -> Evento -> Bool
@@ -184,29 +193,47 @@ compararCantAtracciones ciudad evento = length (atracciones (aplicarEvento event
 aplicarEvento :: Evento -> Ciudad -> Ciudad
 aplicarEvento evento ciudad = evento ciudad
 
--- Realizar un evento si aumenta el costo de vida
-eventoAumentaCostoDeVida :: Annio -> Evento
-eventoAumentaCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
-  where
-    aplicarEventoSiAumentaCosto ciudad evento =
-      if compararCostoDeVida ciudad evento
-        then aplicarEvento evento ciudad
-        else ciudad
 
--- Realizar un evento si disminuye el costo de vida
-eventoDisminuyeCostoDeVida :: Annio -> Evento
-eventoDisminuyeCostoDeVida annio ciudad = foldl aplicarEventoSiAumentaCosto ciudad (eventos annio)
-  where
-    aplicarEventoSiAumentaCosto ciudad evento =
-      if not (compararCostoDeVida ciudad evento)
-        then aplicarEvento evento ciudad
-        else ciudad
+-- Funcion 3
 
--- Realizar un evento si aumenta la cantidad de atracciones
-eventoAumentaValor :: Annio -> Evento
-eventoAumentaValor annio ciudad = foldl aplicarSiAumentaValorCiudad ciudad (eventos annio)
-  where
-    aplicarSiAumentaValorCiudad ciudad evento =
-      if (valorDeUnaCiudad (aplicarEvento evento ciudad))> (valorDeUnaCiudad ciudad)
-        then aplicarEvento evento ciudad
-        else ciudad
+eventoAumentaCostoDeVida :: Annio -> Ciudad -> Ciudad
+eventoAumentaCostoDeVida annio ciudad = foldl (flip aplicarEvento) ciudad (filter (compararCostoDeVida ciudad) (eventos annio))
+
+-- Funcion 4
+
+eventoDisminuyeCostoDeVida :: Annio -> Ciudad -> Ciudad
+eventoDisminuyeCostoDeVida annio ciudad = foldl (flip aplicarEvento) ciudad (filter (not . compararCostoDeVida ciudad) (eventos annio))
+
+-- Funcion 5
+
+aplicarSiAumentaValorCiudad :: Ciudad -> Evento -> Bool
+aplicarSiAumentaValorCiudad ciudad evento = (valorDeUnaCiudad (aplicarEvento evento ciudad)) > valorDeUnaCiudad ciudad
+
+eventoAumentaValor :: Ciudad -> Annio -> Ciudad
+eventoAumentaValor ciudad annio = foldl (flip aplicarEvento) ciudad (filter (aplicarSiAumentaValorCiudad ciudad) (eventos annio))
+
+--------------------- Parte 5 ---------------------------
+
+eventosOrdenados :: Annio -> Ciudad -> Bool
+eventosOrdenados annio ciudad = estaOrdenada (convertirAvalores annio ciudad)
+
+estaOrdenada :: [Number] -> Bool
+estaOrdenada lista = lista == sort lista
+
+convertirAvalores :: Annio -> Ciudad -> [Number]
+convertirAvalores anio ciudad = map (`aumentoDeCostoDeVida` ciudad) (eventos anio) 
+
+aumentoDeCostoDeVida :: Evento -> Ciudad -> Number
+aumentoDeCostoDeVida evento ciudad = costoDeVida (aplicarEvento evento ciudad) - costoDeVida ciudad
+
+dosMilVeintiTres :: Annio
+dosMilVeintiTres = UnAnnio {
+  pasoAnnio = 2023,
+  eventos = [crisis, sumarNuevaAtraccion "parque", remodelacion 10, remodelacion 20]
+}
+
+ciudadesOrdenadas :: Evento -> [Ciudad] -> Bool
+ciudadesOrdenadas evento ciudades = estaOrdenada (listaCostosDeVida evento ciudades)
+
+listaCostosDeVida :: Evento -> [Ciudad] -> [Number]
+listaCostosDeVida evento = map (costoDeVida . aplicarEvento evento) 
