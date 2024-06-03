@@ -1,6 +1,6 @@
-module Escuelita where
+module Escuelita () where
 import PdePreludat
-import Data.List (delete, sort)
+import Data.List (delete)
 
 type Material = String
 type Habilidad = String
