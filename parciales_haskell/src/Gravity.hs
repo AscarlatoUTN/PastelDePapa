@@ -41,9 +41,25 @@ sucesivosEnfrentamientos persona = experiencia . foldl enfrentamiento persona
 
 
 ----------------- Punto 4 -----------------
-zipWithIf :: (Number -> Number -> Number) -> (Number -> Bool) -> [Number] -> [Number] -> [Number]
+zipWithIf :: (a -> b -> b) -> (b -> Bool) -> [a] -> [b] -> [b]
 zipWithIf _ _ _ [] = []
 zipWithIf _ _ [] _ = []
 zipWithIf operacion condicion (x:xs) (y:ys)
-    | condicion y = y `operacion` x : zipWithIf operacion condicion xs ys
+    | condicion y = x `operacion` y : zipWithIf operacion condicion xs ys
     | otherwise = y : zipWithIf operacion condicion (x:xs) ys
+
+----------------- Punto 5 -----------------
+
+---- Inciso A ----
+abecedarioDesde :: Char -> [Char]
+abecedarioDesde letra = dropWhile (/= letra) ['a'..'z'] ++ takeWhile (/= letra) ['a'..'z']
+
+---- Inciso B ----
+desencriptarLetra :: Char -> Char -> Char
+desencriptarLetra clave letra
+    | clave > letra = ['a'..'z'] !! (length ([clave..'z'] ++ ['a'..letra]) - 1)
+    | otherwise = '-'
+
+---- Inciso C ----
+cesar :: Char -> String -> String
+cesar clave = zipWithIf desencriptarLetra (`elem` ['a'..'z']) (repeat clave)
