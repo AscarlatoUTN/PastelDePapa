@@ -11,7 +11,7 @@ data Ninja = UnNinja {
     rango :: Number
 } deriving (Show, Eq)
 
-naruto = UnNinja "naruto" [("bombaDeHumo", 10), ("shuriken", 0)] [clonesDeSombra] 5
+naruto = UnNinja "naruto" [("bombaDeHumo", 10), ("shuriken", 0)] [clonesDeSombra, fuerzaDeUnCentenar, clonesDeSombra] 5
 
 ----------------- Parte A -----------------
 obtenerHerramienta :: Ninja -> Herramienta -> Ninja
@@ -42,6 +42,8 @@ data Mision = UnaMision {
     enemigos :: [Ninja],
     recompensa :: Herramienta
 } deriving (Show, Eq)
+
+misionTest = UnaMision 1 2 [naruto, naruto] ("trofeo", 1)
 
 esDesafiante :: [Ninja] -> Mision -> Bool
 esDesafiante ninjas mision = any ((< nivel mision). rango) ninjas && length (enemigos mision) > 1
@@ -87,6 +89,14 @@ reducirCantidad mision num
 
 fuerzaDeUnCentenar :: Jutsu
 fuerzaDeUnCentenar mision = mision { enemigos = filter ((>= 500) . rango) (enemigos mision)}
+
+aplicarJutsus :: [Ninja] -> Mision -> [Ninja]
+aplicarJutsus ninjas = ejecutarMision ninjas . armarMisiones (concatMap jutsus ninjas)
+
+armarMisiones :: [Jutsu] -> Mision -> Mision
+armarMisiones jutsus mision = foldl (\ mision jutsu -> jutsu mision) mision jutsus
+--armarMisiones [] mision = mision 
+--armarMisiones (jutsu:jutsus) mision = armarMisiones jutsus (jutsu mision)
 
 ejecutarMision :: [Ninja] -> Mision -> [Ninja]
 ejecutarMision ninjas mision
