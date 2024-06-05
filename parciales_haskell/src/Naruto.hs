@@ -41,7 +41,7 @@ data Mision = UnaMision {
     nivel :: Number,
     enemigos :: [Ninja],
     recompensa :: Herramienta
-}
+} deriving (Show, Eq)
 
 esDesafiante :: [Ninja] -> Mision -> Bool
 esDesafiante ninjas mision = any ((< nivel mision). rango) ninjas && length (enemigos mision) > 1
@@ -86,9 +86,23 @@ reducirCantidad mision num
     | otherwise = 1
 
 fuerzaDeUnCentenar :: Jutsu
-fuerzaDeUnCentenar mision = mision { enemigos = filter ((< 500) . rango) (enemigos mision)}
+fuerzaDeUnCentenar mision = mision { enemigos = filter ((>= 500) . rango) (enemigos mision)}
 
 ejecutarMision :: [Ninja] -> Mision -> [Ninja]
 ejecutarMision ninjas mision
     | esCopada ninjas mision || esFactible ninjas mision = cumplirMision mision ninjas
     | otherwise = fallarMision mision ninjas
+
+granGuerraNinja = UnaMision 100000 100 (infinitosZetsu 1) ("abanico", 1)
+
+infinitosZetsu :: Number -> [Ninja]
+infinitosZetsu 5 = []
+infinitosZetsu num = crearNinja num : infinitosZetsu (num + 1)
+    
+crearNinja :: Number -> Ninja
+crearNinja num = UnNinja {
+    nombre = "jutsu" ++ show num,
+    herramientas = [],
+    jutsus = [],
+    rango = 600
+}
