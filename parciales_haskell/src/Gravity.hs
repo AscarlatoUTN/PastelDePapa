@@ -1,4 +1,4 @@
-module Gravity where
+module Gravity () where
 import PdePreludat
 
 data Criatura = UnaCriatura {
