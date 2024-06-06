@@ -83,7 +83,7 @@ destruirGusanoDeArena fremen gusano
     | otherwise = cambiarTolerancia (*) 0.8 fremen
 
 loDestruye :: Fremen -> Gusano -> Bool
-loDestruye fremen gusano = "Domador" `elem` titulos fremen && tolerancia fremen < 0.5 * longitud gusano
+loDestruye fremen gusano = "Domador" `elem` titulos fremen && not (loDoma fremen gusano)
 
 detonarGusanoDeArena :: Mision
 detonarGusanoDeArena fremen gusano
