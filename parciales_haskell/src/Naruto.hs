@@ -1,4 +1,4 @@
-module Naruto where
+module Naruto () where
 import PdePreludat
 import Data.List (delete)
 
