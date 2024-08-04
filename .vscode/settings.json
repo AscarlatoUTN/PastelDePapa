@@ -1,0 +1,7 @@
+{
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ],
+    "workbench.panel.defaultLocation": "right",
+    "debug.console.autoReveal": false
+}
