@@ -68,6 +68,7 @@ aceptaPedido(Persona, tareaPedida(Cliente, Tareas, Metros)):-
     forall(tareaPedida(Cliente, Tareas, _), realizarTarea(Persona, Tareas)),
     acepta(Persona, tareaPedida(Cliente, Tareas, Metros)).
 
+acepta(peter, _).
 acepta(ray, tareaPedida(_, Tareas, _)):-
     not(member(limpiarTecho, Tareas)).
 acepta(winston, tareaPedida(_, Tareas, Metros)):-
