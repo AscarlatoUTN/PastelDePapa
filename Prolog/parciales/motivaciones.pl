@@ -59,36 +59,3 @@ completoNivel(Persona, Nivel):-
     jerarquia(Posicion, Nivel),
     findall(Necesidad, cumpleCondicion(Necesidades, Posicion, Necesidad), NecesidadesAltas),
     length(NecesidadesAltas, 0).
-
-%% Punto 6
-/*
-verificaMaslow(Persona):-
-    findall(Nivel, jerarquia(Nivel, _), Niveles),
-    max_member(Posicion, Niveles),
-
-buscarNecesidad2(Necesidades, I):-
-    cumpleCondicion(Necesidades, I, _).
-buscarNecesidad2(Necesidades, I):-
-    I > 0,
-    J is I - 1,
-    buscarNecesidad2(Necesidades, J).
-
-forall hasta q no tenga todas de un nivel,
-verificar si tiene alguna de un nivel superior.
-
-    vaCompletando(Persona, Posicion).
-
-vaCompletando(Persona, Posicion):-
-    necesita(Persona, Necesidades),
-    findall(Necesidad, cumpleCondicion(Necesidades, Posicion, Necesidad), NecesidadesAltas),
-    intersection(Necesidades, NecesidadesAltas, Lista),
-    length(Lista, 0).
-vaCompletando(Persona, Posicion):-
-    necesita(Persona, Necesidades),
-    Pos is Posicion - 1,
-    buscarNecesidad2(Necesidades, Pos).
-
-% Completa
-%% No completa
-%% No debe tener nada ...
-*/
