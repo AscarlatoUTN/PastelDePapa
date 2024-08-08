@@ -30,15 +30,18 @@ diferenciaDeNivel(Necesidad1, Necesidad2, Diferencia):-
     Diferencia is abs(Nivel1 - Nivel2).
 
 %% Punto 3
-necesita(carla, [alimentacion, descanso, empleo]). % NO
-necesita(juan, [afecto, exito]). % NO
-necesita(roberto, [amistad]). % NO
-necesita(manuel, [libertad]).
-necesita(charly, [afecto, aseo]). % NO
+necesita(carla, alimentacion).
+necesita(carla, descanso).
+necesita(carla, empleo).
+necesita(juan, afecto).
+necesita(juan, exito).
+necesita(roberto, amistad).
+necesita(manuel, libertad).
+necesita(charly, afecto).
+necesita(charly, aseo).
 
-%% Punto 4
 necesidadMasJerarquica(Persona, Necesidad):-   
-    necesita(Persona, Necesidades),
+    findall(Necesidad, necesita(Persona, Necesidad), Necesidades),
     buscarNecesidad(Necesidades, 0, Necesidad).
 
 buscarNecesidad(Necesidades, I, Necesidad):-
@@ -53,9 +56,10 @@ cumpleCondicion(Necesidades, I, Necesidad):-
     necesidad(Jerarquia, Necesidad), 
     jerarquia(I, Jerarquia).
 
-%% Punto 5
+% Punto 5
 completoNivel(Persona, Nivel):-
-    necesita(Persona, Necesidades),
+    necesita(Persona, _),
     jerarquia(Posicion, Nivel),
+    findall(Necesidad, necesita(Persona, Necesidad), Necesidades),
     findall(Necesidad, cumpleCondicion(Necesidades, Posicion, Necesidad), NecesidadesAltas),
     length(NecesidadesAltas, 0).
