@@ -36,3 +36,29 @@ malaIdea(Personas, Parque):-
 
 todosJuegan(Atraccion, Personas):-
     forall(member(Persona, Personas), puedeSubir(Persona, Atraccion)).
+
+programaLogico(Programa):-
+    noHayDuplicados(Programa),
+    atracciones(Parque, _),
+    forall(member(Atraccion, Programa), (atracciones(Parque, Atracciones), member(Atraccion, Atracciones))).
+
+noHayDuplicados([]).
+noHayDuplicados([Atraccion|Atracciones]):-
+    not(member(Atraccion, Atracciones)).
+
+hastaAca(Persona, Programa, Subprograma):-
+    persona(Persona, _, _),
+    esPrograma(Programa),
+    atraccionesDisponibles(Persona, Programa, Atracciones),
+    reverse(Atracciones, Subprograma).
+
+esPrograma(Programa):-
+    atracciones(Parque, _),
+    forall(member(Atraccion, Programa), (atracciones(Parque, Atracciones), member(Atraccion, Atracciones))).
+
+atraccionesDisponibles(_, [], []).
+atraccionesDisponibles(Persona, [Atraccion|Atracciones], Subprograma):-
+    puedeSubir(Persona, Atraccion),
+    atraccionesDisponibles(Persona, Atracciones, ListaAtracciones),
+    append(ListaAtracciones, [Atraccion], Subprograma).
+atraccionesDisponibles(_, _, []).
