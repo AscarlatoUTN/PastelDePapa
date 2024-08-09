@@ -1,37 +1,59 @@
 %% Punto 1
-vacaciona(dodain, [pehuenia, sanMartin, esquel, sarmiento, camarones, playasDoradas]).
-vacaciona(alf, [bariloche, sanMartin, elBolson]).
-vacaciona(nico, [marDelPlata]).
-vacaciona(vale, [calafate, elBolson]).
+vacaciona(dodain, pehuenia).
+vacaciona(dodain, sanMartin).
+vacaciona(dodain, esquel).
+vacaciona(dodain, sarmiento).
+vacaciona(dodain, camarones).
+vacaciona(dodain, playasDoradas).
+vacaciona(alf, bariloche).
+vacaciona(alf, sanMartin).
+vacaciona(alf, elBolson).
+vacaciona(nico, marDelPlata).
+vacaciona(vale, calafate).
+vacaciona(vale, elBolson).
 vacaciona(martu, Vacaciones):-
-    vacaciona(nico, Vacas1),
-    vacaciona(vale, Vacas2),
-    append(Vacas1, Vacas2, Vacaciones).
+    vacaciona(nico, Vacaciones).
+vacaciona(martu, Vacaciones):-
+    vacaciona(vale, Vacaciones).
 vacaciona(juan, Vacaciones):-
-    random_member([Vacaciones], [villaGesell, federacion]).
+    random_member(Vacaciones, [villaGesell, federacion]).
 
-%% Punto 2
-turismo(esquel, 150, [parqueNacional(losAlerces), excursion(trochita), excursion(trevelin)]).
-turismo(pehuenia, 180, [cerro(bateaMahuida, 2000), cuerpoDeAgua(moheque, puedePescar, 14), cuerpoDeAgua(alumine, puedePescar, 19)]).
-turismo(sanMartin, 150, [excursion(lagoLolog), excursion(quetraHue), excursion(chimehuin)]).
-turismo(sarmiento, 100, [excursion(cuevaDeLasManos), parqueNacional(bosquesPetrificados)]).
-turismo(camarones, 135, [cuerpoDeAgua(playa, 3), excursion(bosquePetrificado)]).
-turismo(playasDoradas, 170, [playa(4), excursion(faroQuerandi)]).
-turismo(bariloche, 140, [excursion(circuitoChico), excursion(islaVictoria), excursion(bosqueArrayanes)]).
-turismo(elBolson, 145, [excursion(rioAzul), excursion(cerroAmigo), excursion(lagoPuelo)]).
-turismo(marDelPlata, 140, [cuerpoDeAgua(playa, 5), excursion(faro, 2)]).
-turismo(calafate, 240, [excursion(glaciarPeritoMoreno), excursion(lagoArgentino), excursion(chalten)]).
-turismo(villaGesell, 60, [cuerpoDeAgua(playa, 6), excursion(faroQuerandi)]).
-turismo(federacion, 40, [cuerpoDeAgua(termas, 25), excursion(saltoDelTabaquillo)]).
+%% Punto 2 (quitar todas las listas y pasarlas a hechos)
+turismo(esquel, 150, parqueNacional(losAlerces)).
+turismo(esquel, 150, excursion(trochita)).
+turismo(esquel, 150, excursion(trevelin)).
+turismo(pehuenia, 180, cerro(bateaMahuida, 2000)).
+turismo(pehuenia, 180, cuerpoDeAgua(moheque, puedePescar, 14)).
+turismo(pehuenia, 180, cuerpoDeAgua(alumine, puedePescar, 19)).
+%turismo(sanMartin, 150, excursion(lagoLolog)).
+%turismo(sanMartin, 150, excursion(quetraHue)).
+%turismo(sanMartin, 150, excursion(chimehuin)).
+%turismo(sarmiento, 100, excursion(cuevaDeLasManos)).
+%turismo(sarmiento, 100, parqueNacional(bosquesPetrificados)).
+%turismo(camarones, 135, cuerpoDeAgua(playa, 3)).
+%turismo(camarones, 135, excursion(bosquePetrificado)).
+%turismo(playasDoradas, 170, playa(4)).
+%turismo(playasDoradas, 170, excursion(faroQuerandi)).
+%turismo(bariloche, 140, excursion(circuitoChico)).
+%turismo(bariloche, 140, excursion(islaVictoria)).
+%turismo(bariloche, 140, excursion(bosqueArrayanes)).
+%turismo(elBolson, 145, excursion(rioAzul)).
+%turismo(elBolson, 145, excursion(cerroAmigo)).
+%turismo(elBolson, 145, excursion(lagoPuelo)).
+%turismo(marDelPlata, 140, cuerpoDeAgua(playa, 5)).
+%turismo(marDelPlata, 140, excursion(faro, 2)).
+%turismo(calafate, 240, excursion(glaciarPeritoMoreno)).
+%turismo(calafate, 240, excursion(lagoArgentino)).
+%turismo(calafate, 240, excursion(chalten)).
+%turismo(villaGesell, 60, cuerpoDeAgua(playa, 6)).
+%turismo(villaGesell, 60, excursion(faroQuerandi)).
+%turismo(federacion, 40, cuerpoDeAgua(termas, 25)).
+%turismo(federacion, 40, excursion(saltoDelTabaquillo)).
 
-vacacionesCopadas(Persona, Vacaciones):-
-    vacaciona(Persona, Lugares),
-    findall(Vacacion, (atraccion(Lugares, Vacacion), esCopado(Vacacion)), Vacaciones).
-
-atraccion(Lugares, Vacacion):-
-    member(Lugar, Lugares),
-    turismo(Lugar, _, Vacaciones),
-    member(Vacacion, Vacaciones).
+vacacionesCopadas(Persona, Lugar):-
+    vacaciona(Persona, Lugar),
+    findall(Vacacion, (turismo(Lugar, _, Vacacion), esCopado(Vacacion)), Vacaciones), 
+    not(length(Vacaciones, 0)).
 
 esCopado(cerro(_, 2000)).
 esCopado(cuerpoDeAgua(puedePescar, _)).
@@ -47,17 +69,20 @@ esCopado(parqueNacional(_)).
 
 %% Punto 3
 noSeCruzan(Persona1, Persona2):-
-    vacaciona(Persona1, Lugares1),
-    vacaciona(Persona2, Lugares2),
+    distinct(Persona1, vacaciona(Persona1, _)),
+    distinct(Persona2, vacaciona(Persona2, _)),
     Persona1 \= Persona2,
+    findall(Lugar1, vacaciona(Persona1, Lugar1), Lugares1),
+    findall(Lugar2, vacaciona(Persona2, Lugar2), Lugares2),
     intersection(Lugares1, Lugares2, []).
 
 %% Punto 4
 vacacionesGasoleras(Persona):- % Ejemplo del parcial lo tienen mal
-    vacaciona(Persona, Destinos),
-    forall((turismo(Destino, CostoDeVida, _), member(Destino, Destinos)), CostoDeVida < 160).
+    distinct(Persona, vacaciona(Persona, _)),
+    findall(Destino, distinct(Destino, vacaciona(Persona, Destino)), Destinos),
+    forall((member(Destino, Destinos), turismo(Destino, CostoDeVida, _)), CostoDeVida < 160).
 
 %% Punto 5
 itinerariosPosibles(Persona, Itinerarios):-
-    vacaciona(Persona, Destinos),
+    findall(Destino, vacaciona(Persona, Destino), Destinos),
     permutation(Destinos, Itinerarios). % Te re cabió
