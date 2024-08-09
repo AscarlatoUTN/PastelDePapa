@@ -21,7 +21,7 @@ quienAtiende(Persona, Dia, Hora):-
     between(Inicio, Fin, Hora).
 
 %% Punto 3
-foreverAlone(Persona, Dia, Hora):- % No funca con dodain y vale
+foreverAlone(Persona, Dia, Hora):-
     distinct(Persona, atiende(Persona, _, _, _)),
     findall(Alguien, quienAtiende(Alguien, Dia, Hora), Personas),
     not(length(Personas, 0)),
@@ -33,10 +33,6 @@ quienAtiendeHoy(Dia, Personas):-
     findall(Persona, distinct(Persona, quienAtiende(Persona, Dia, Hora)), Personas).
 
 %% Punto 5
-% venta(golosina(Valor)).
-% venta(cigarrillo(Marca)).
-% venta(bebida(Alcoholica, Cantidad)).
-
 venta(dodain, fecha(lunes, 10, agosto), golosina(1200)).
 venta(dodain, fecha(lunes, 10, agosto), cigarrillo([jockey])).
 venta(dodain, fecha(lunes, 10, agosto), golosina(50)).
