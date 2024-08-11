@@ -1,5 +1,6 @@
 % Relaciona al duenio con el nombre del juguete y la cantidad de anios que lo ha tenido
 duenio(andy, woody, 8).
+duenio(andy, buzz, 3).
 duenio(sam, jessie, 3).
 % Relaciona al juguete con su nombre
 % los juguetes son de la forma:
@@ -87,3 +88,60 @@ hacenBuenaPareja(Nombre1, Nombre2):-
     tematica(juguete(_, Tipo1), Tematica1),
     tematica(juguete(_, Tipo2), Tematica2),
     Tematica1 == Tematica2.
+
+%% Punto 5
+felicidad(Duenio, Felicidad):-
+    duenio(Duenio, Nombre, _),
+    juguete(Nombre, Tipo),
+    findall(Felicidad, daFelicidad(Duenio, Tipo, Felicidad), Felicidades),
+    sum_list(Felicidades, Felicidad).
+
+daFelicidad(_, miniFiguras(_, Cant), Felicidad):-
+    Felicidad is 20 * Cant.
+daFelicidad(_, caraDePapa(Partes), Felicidad):-
+    findall(Parte, (member(Parte, Partes), esOriginal(Parte)), PartesOriginales),
+    length(Partes, CantPartes),
+    length(PartesOriginales, X),
+    Y is CantPartes - X,
+    Felicidad is 5 * X + 8 * Y.
+daFelicidad(_, deTrapo(_), 100).
+daFelicidad(Duenio, deAccion(Tematica, Partes), Felicidad):-
+    esColeccionista(Duenio),
+    esDeColeccion(juego(Duenio, deAccion(Tematica, Partes))),
+    Felicidad is 120.
+daFelicidad(_, deAccion(_, _), 100).
+
+%% Punto 6
+puedeJugarCon(Persona, Nombre):-
+    duenio(Persona, Nombre, _).
+puedeJugarCon(Persona, Nombre):-
+    distinct(Persona, duenio(Persona, _, _)),
+    duenio(Duenio, Nombre, _),
+    findall(Nombre1, duenio(Duenio, Nombre1, _), CantDuenio),
+    findall(Nombre2, duenio(Persona, Nombre2, _), CantPersona),
+    length(CantDuenio, X),
+    length(CantPersona, Y),
+    X > Y.
+
+%% Punto 7
+podriaDONAR(Duenio, Juguetes, FelicidadMaxima):-
+    not(length(Juguetes, 0)),
+    duenio(Duenio, _, _),
+    findall(Felicidad, felicidadDuenio(Juguetes, Duenio, Felicidad), Felicidades),
+    sum_list(Felicidades, FelicidadTotal),
+    FelicidadMaxima > FelicidadTotal.
+podriaDONAR(Duenio, Juguetes, FelicidadMaxima):-
+    distinct(Duenio, duenio(Duenio, _, _)),
+    findall(juguete(Nombre, Tipo), esDuenio(Duenio, Nombre, Tipo), Juguetes),
+    findall(Felicidad, felicidadDuenio(Juguetes, Duenio, Felicidad), Felicidades),
+    sum_list(Felicidades, FelicidadTotal),
+    FelicidadMaxima > FelicidadTotal.
+
+esDuenio(Duenio, Nombre, Tipo):-
+    duenio(Duenio, Nombre, _),
+    juguete(Nombre, Tipo).
+
+felicidadDuenio(Juguetes, Duenio, Felicidad):-
+    duenio(Duenio, Nombre, _),
+    member(juguete(Nombre, Tipo), Juguetes),
+    daFelicidad(Duenio, Tipo, Felicidad).
