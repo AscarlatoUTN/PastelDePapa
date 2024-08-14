@@ -94,7 +94,7 @@ puntajeTotal(Casa, Puntuacion):-
 %% Punto 3
 casaGanadora(Ganador):-
     findall(Casa, acepta(_, Casa), Casas),
-    findall(Puntaje, puntajeTotal(Casa, Puntaje), Puntajes),
+    findall(Puntaje, (member(Casa, Casas), puntajeTotal(Casa, Puntaje)), Puntajes),
     max_member(Puntuacion, Puntajes),
     puntajeTotal(Ganador, Puntuacion).
 
