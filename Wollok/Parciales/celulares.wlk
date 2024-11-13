@@ -36,6 +36,16 @@ object facturado{
     }
 }
 
+class Descarga{
+    const comprador
+    const mesCompra
+    const productoAdquirido
+
+    method comprador() = comprador
+    method mesCompra() = mesCompra
+    method productoAdquirido() = productoAdquirido
+}
+
 class Empresa{
     const property descargas
 
@@ -46,25 +56,44 @@ class Empresa{
     method registrarDescarga(producto, cliente){
         if(cliente.puedeDescargar(self.precioDescarga(producto, cliente))){
             const fecha = new Date().Month()
-            descargas.add([cliente, producto, fecha])
+            descargas.add(new Descarga(comprador = cliente, productoAdquirido = producto, mesCompra = fecha))
             cliente.plan().actualizarMonto(self.precioDescarga(producto, cliente))
             cliente.descargas().add(producto)
         }
     }
 
     // Punto 3
-    method gastoCliente(cliente, mesActual){
-        const listaFiltrada = descargas.filter({descarga => descarga.take(0) == cliente and descarga.take(2) == mesActual})
-        return listaFiltrada.map({descarga => self.precioDescarga(descarga.take(1), cliente)}).sum()
+    method gastoCliente(cliente, mes){
+        var listaFiltrada = self.descargasCliente(cliente)
+        listaFiltrada = listaFiltrada.filter({descarga => descarga.mesCompra() == mes})
+        listaFiltrada = listaFiltrada.map({descarga => descarga.productoAdquirido()})
+        return listaFiltrada.sum({producto => self.precioDescarga(producto, cliente)})
     }
 
-    method descargasCliente(cliente) = descargas.filter({descarga => descarga.take(0) == cliente})
+    method descargasCliente(cliente) = descargas.filter({descarga => descarga.comprador() == cliente})
 
     // Punto 4
-    method clienteColgado(cliente) = cliente.descargas().any({descarga => cliente.descargas().occurrencesOf(descarga) > 1})
+    method clienteColgado(cliente) = self.descargasCliente(cliente).any({descarga => self.descargasCliente(cliente).occurrencesOf(descarga) > 1})
 
-    method productoEncabezado(fecha)
+    method productoEncabezado(mes){
+        const listaFiltrada = self.productosDelMes(mes)
+        
+        const maxOcurrences = listaFiltrada.map({producto => listaFiltrada.occurrencesOf(producto)}).max()
+
+        return self.productosDelMes(mes).filter({producto => self.productosDelMes(mes).occurrencesOf(producto) == maxOcurrences})
+    }
+
+    method productosDelMes(mes){
+        const listaFiltrada = descargas.filter({descarga => descarga.mesCompra() == mes})
+        return listaFiltrada.map({descarga => descarga.productoAdquirido()})
+    }
 }
+
+// const ringtone1 = new Ringtone(duracion = 30, precioPorMinuto = 0.5)
+// const descarga1 = new Descarga(comprador = cliente1, productoAdquirido = ringtone1, mesCompra = 1)
+// const descarga2 = new Descarga(comprador = cliente1, productoAdquirido = ringtone1, mesCompra = 2)
+// const cliente1 = new Cliente(companiaTeleco = nacional, descargas = [], plan = new Plan(tipoPlan = prepago, saldo = 1000))
+// const empresa = new Empresa(descargas = [descarga1, descarga2])
 
 class Producto{
     const tipoProducto
