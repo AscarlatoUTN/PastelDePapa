@@ -1,5 +1,5 @@
 // Punto 1
-
+/*
 class Linea{
     const telefono
     const property packsActivos
@@ -59,3 +59,4 @@ class Llamadas{
 }
 
 // Punto 3
+*/
