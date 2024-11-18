@@ -123,8 +123,6 @@ Punto 1
 
 describe "Vikingos" {
 
-   
-
     test "Armar expediciones" { // 1
         const ragnar = new Vikingo(castaSocial = jarl, tipoVikingo = soldado, vidasCobradas = 2, armas = , hijos = [], cantHectareas = 1, oro = 10)
         const aldea1 = new Aldea(cantMinVikingos = 0, iglesias = [new Iglesia(cantCrucifijos = 10)])
@@ -151,4 +149,3 @@ Punto 4
 
 Si, dado que se hace uso de polimorfismo para el metodo esInvadido() y valeLaPena(), se implementa agregando una clase castillo que implemente estos metodos de forma diferente a las clases Capital y Aldea.
 */
- 

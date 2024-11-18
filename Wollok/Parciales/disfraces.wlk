@@ -6,8 +6,8 @@ class Fiesta{
     method esUnBodrio() = !invitados.any({invitado => invitado.estaConforme()})
 
     method mejorDisfraz(){
-        const invitadoMejorDisfrazado = invitados.max({invitado => invitado.disfraz().tipoDisfraz().puntuarDisfraz(invitado)})
-        return invitadoMejorDisfrazado.disfraz()
+        const mejorPuntuacion = invitados.map({invitado => invitado.disfraz().tipoDisfraz().puntuarDisfraz(invitado)}).max()
+        return invitados.find({invitado => invitado.disfraz().tipoDisfraz().puntuarDisfraz(invitado) == mejorPuntuacion})
     }
 
     method intercambianTrajes(invitado1, invitado2) = invitado1.fiesta() == invitado2.fiesta() and self.algunDisconforme(invitado1, invitado2) and self.conformesConCambio(invitado1, invitado2)
