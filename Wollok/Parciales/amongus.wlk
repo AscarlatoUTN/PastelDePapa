@@ -176,11 +176,9 @@ object nave {
     }
 
     method jugadorMasVotado(){
-        const listaVotos = jugadores.map({jugador => jugador.votos()})
-        const maxCantVotos = listaVotos.max()
-        if(maxCantVotos >= votosEnBlanco){
-            const jugadorMasVotado = jugadores.filter({jugador => jugador.votos() == maxCantVotos})
-            return jugadores.anyOne()
+        const jugadorMasVotado = jugadores.max({jugador => jugador.votos()})
+        if(jugadorMasVotado.votos() >= votosEnBlanco){
+            return jugadorMasVotado
         } else{
             return null
         }
