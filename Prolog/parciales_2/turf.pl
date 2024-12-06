@@ -63,7 +63,7 @@ resultaGanadora(posicion(Posicion, Caballo), Resultado):-
     member(posicion(Posicion, Caballo), Resultado).
 resultaGanadora(exacta(posicion(1, Caballo1), posicion(2, Caballo2)), Resultado):-
     member(exacta(posicion(1, Caballo1)), Resultado),
-    member(exacta(posicion(2, Caballo2)), Resultado),
+    member(exacta(posicion(2, Caballo2)), Resultado).
 resultaGanadora(imperfecta(Caballo1, Caballo2), Resultado):-
     member(posicion(Pos1, Caballo1), Resultado),
     member(posicion(Pos2, Caballo2), Resultado),
